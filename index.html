@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>蛋仔派对充值折扣计算器</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8f9fa;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar {
+      width: 220px;
+      background: #2c3e50;
+      color: white;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .sidebar-item {
+      padding: 15px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid transparent;
+    }
+
+    .sidebar-item:hover {
+      background: #34495e;
+      border-left-color: #3498db;
+    }
+
+    .sidebar-item.active {
+      background: #34495e;
+      border-left-color: #3498db;
+      color: #3498db;
+    }
+
+    .content {
+      flex: 1;
+      background: white;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    h1 {
+      text-align: left;
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-size: 28px;
+      font-weight: 700;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #ecf0f1;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .radio-option {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      border: 2px solid #f0f0f0;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .radio-option:hover {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    .radio-option input[type="radio"] {
+      margin-right: 8px;
+      accent-color: #667eea;
+      width: 16px;
+      height: 16px;
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    input[type="number"]:focus,
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 15px;
+    }
+
+    .btn:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-secondary {
+      background: #95a5a6;
+      margin-left: 10px;
+    }
+
+    .btn-secondary:hover {
+      background: #7f8c8d;
+      box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .custom-plan-inputs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .custom-plan-inputs input {
+      flex: 1;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+      margin-bottom: 0;
+    }
+
+    .results {
+      margin-top: 25px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .results.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .result-label {
+      color: #555;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .result-value {
+      color: #2c3e50;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .profit-positive {
+      color: #27ae60 !important;
+    }
+
+    .profit-negative {
+      color: #e74c3c !important;
+    }
+
+    .profit-zero {
+      color: #7f8c8d !important;
+    }
+
+    .section-divider {
+      margin: 35px 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+      border: none;
+    }
+
+    .section-title {
+      color: #667eea;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        padding: 10px 0;
+        border-right: none;
+        border-bottom: 1px solid #34495e;
+      }
+
+      .sidebar-item {
+        flex: 1;
+        text-align: center;
+        font-size: 14px;
+        padding: 12px;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+      }
+
+      .sidebar-item:hover {
+        border-left: none;
+        border-bottom-color: #3498db;
+      }
+
+      .sidebar-item.active {
+        border-left: none;
+        border-bottom-color: #3498db;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 25px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .radio-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .radio-option {
+        justify-content: flex-start;
+        padding: 8px 12px;
+      }
+
+      .result-value {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        max-width: 100%;
+      }
+
+      .sidebar {
+        padding: 8px 0;
+      }
+
+      .sidebar-item {
+        font-size: 12px;
+        padding: 10px 8px;
+      }
+
+      .content {
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 20px;
+        margin-bottom: 20px;
+      }
+
+      input[type="number"],
+      input[type="text"] {
+        padding: 10px 12px;
+        font-size: 15px;
+      }
+
+      .btn {
+        padding: 12px;
+        font-size: 15px;
+      }
+
+      .results {
+        padding: 15px;
+      }
+
+      .result-item {
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+      }
+    }
+
+    /* 模态框样式 */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      transform: translateY(-20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal.show .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #e0e0e0;
+      background: #f8f9fa;
+      border-radius: 12px 12px 0 0;
+      position: relative;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+      transition: color 0.3s ease;
+    }
+
+    .modal-close:hover {
+      color: #333;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-footer {
+      display: none;
+    }
+
+    .option-card {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .option-header {
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .option-header .rank {
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .option-details {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .option-details p {
+      margin: 8px 0;
+    }
+
+    .recharge-type {
+      font-weight: 600;
+      color: #3498db;
+      font-size: 16px;
+      margin-bottom: 12px !important;
+    }
+
+    .option-details .value {
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .option-details .value.positive {
+      color: #27ae60;
+    }
+
+    .option-details .value.negative {
+      color: #e74c3c;
+    }
+
+    .option-details .value.zero {
+      color: #95a5a6;
+    }
+
+    /* 组合充值步骤样式 */
+    .combination-steps {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f0f4f8;
+      border-radius: 8px;
+      border-left: 4px solid #3498db;
+    }
+
+    .combination-steps h4 {
+      margin: 0 0 15px 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .steps-container {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+
+    .step-item {
+      background: white;
+      border-radius: 6px;
+      padding: 15px;
+      border: 1px solid #e0e0e0;
+      min-width: 200px;
+      flex: 1;
+    }
+
+    .step-item h5 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #3498db;
+    }
+
+    .step-item p {
+      margin: 6px 0;
+      font-size: 13px;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .modal-content {
+        width: 95%;
+        max-height: 85vh;
+      }
+
+      .modal-header,
+      .modal-body,
+      .modal-footer {
+        padding: 16px;
+      }
+
+      .option-card {
+        padding: 16px;
+      }
+
+      .option-header .rank {
+        font-size: 16px;
+      }
+
+      .recharge-type {
+        font-size: 14px;
+      }
+
+      .combination-steps {
+        padding: 12px;
+      }
+
+      .combination-steps h4 {
+        font-size: 14px;
+      }
+
+      .step-item {
+        padding: 12px;
+      }
+
+      .step-item h5 {
+        font-size: 13px;
+      }
+
+      .step-item p {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="sidebar-item" onclick="showTab('calculator')">
+        🥚 充值计算器
+      </div>
+      <div class="sidebar-item active" onclick="showTab('coupon')">
+        🎫 优惠券分析
+      </div>
+    </div>
+
+    <div class="content">
+      <div id="calculator-tab" style="display: none;">
+        <h1>🥚 蛋仔派对充值计算器</h1>
+
+        <div class="form-group">
+          <label>选择日期类型</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="rebate" name="dayType" value="rebate" checked>
+              <label for="rebate">返利日</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="normal" name="dayType" value="normal">
+              <label for="normal">非返利日</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="rechargeAmount">充值金额（元）</label>
+          <input type="number" id="rechargeAmount" placeholder="例如：328" step="0.01">
+        </div>
+
+        <div class="form-group">
+          <label for="actualPayment">实际付款金额（元）</label>
+          <input type="number" id="actualPayment" placeholder="例如：246" step="0.01">
+        </div>
+
+        <button class="btn" onclick="calculate()">计算</button>
+
+        <div class="form-group" style="margin-top: 20px;">
+          <label for="eggRate">蛋币兑换比例（元/蛋币）</label>
+          <input type="number" id="eggRate" placeholder="例如：0.065" step="0.001">
+        </div>
+
+        <div class="form-group">
+          <label for="couponRate">无门槛优惠券兑换比例（元/优惠券）</label>
+          <input type="number" id="couponRate" placeholder="例如：0.7" step="0.01">
+        </div>
+
+        <button class="btn" onclick="calculateProfit()">计算利润</button>
+
+        <div class="results" id="results">
+          <div class="result-item">
+            <div class="result-label">获得蛋币</div>
+            <div class="result-value" id="eggCoins">-</div>
+          </div>
+          <div class="result-item" id="couponItem">
+            <div class="result-label">无门槛优惠券</div>
+            <div class="result-value" id="coupons">-</div>
+          </div>
+          <div class="result-item" id="totalReturnItem">
+            <div class="result-label">兑换后总金额（元）</div>
+            <div class="result-value" id="totalReturn">-</div>
+          </div>
+          <div class="result-item" id="profitItem">
+            <div class="result-label">赚取金额（元）</div>
+            <div class="result-value" id="profit">-</div>
+          </div>
+          <div class="result-item" id="discountItem">
+            <div class="result-label">折扣</div>
+            <div class="result-value" id="discount">-</div>
+          </div>
+          <div class="result-item" id="actualDiscountItem">
+            <div class="result-label">实际折扣</div>
+            <div class="result-value" id="actualDiscount">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="coupon-tab">
+        <h1>🎫 优惠券分析</h1>
+
+        <div class="form-group">
+          <label>选择日期类型</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="couponRebate" name="couponDayType" value="rebate" checked>
+              <label for="couponRebate">返利日</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="couponNormal" name="couponDayType" value="normal">
+              <label for="couponNormal">非返利日</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>优惠券类型</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="discountCoupon" name="couponType" value="discount" checked>
+              <label for="discountCoupon">折扣券（如7折）</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="fixedCoupon" name="couponType" value="fixed">
+              <label for="fixedCoupon">金额券（如328-100）</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" id="discountInput">
+          <label for="couponDiscount">优惠券折扣（如0.7表示7折）</label>
+          <input type="number" id="couponDiscount" placeholder="例如：0.7" step="0.01">
+        </div>
+        <div class="form-group" id="fixedInput" style="display: none;">
+          <label for="minAmount">使用门槛（元）</label>
+          <input type="number" id="minAmount" placeholder="例如：328" step="0.01">
+          <label for="fixedAmount">优惠金额（元）</label>
+          <input type="number" id="fixedAmount" placeholder="例如：100" step="0.01">
+        </div>
+        <div class="form-group" id="useTypeInput">
+          <label>优惠券使用次数</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="multipleUse" name="useType" value="multiple" checked>
+              <label for="multipleUse">多次使用</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="singleUse" name="useType" value="single">
+              <label for="singleUse">单次使用</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" id="couponAmountInput">
+          <label for="couponAmount">可抵金额（元）</label>
+          <input type="number" id="couponAmount" placeholder="例如：10" step="0.01">
+        </div>
+
+        <div class="form-group">
+          <label>自定义充值方案</label>
+          <div class="custom-plan-inputs">
+            <input type="number" id="customPlan1" placeholder="充值金额1（元）" step="0.01">
+            <input type="number" id="customPlan2" placeholder="充值金额2（元）" step="0.01">
+            <input type="number" id="customPlan3" placeholder="充值金额3（元）" step="0.01">
+          </div>
+          <p class="hint">填写充值金额，留空表示不使用该位置</p>
+        </div>
+
+        <div class="button-group">
+          <button class="btn" onclick="analyzeCoupon()">分析最优充值方案</button>
+          <button class="btn btn-secondary" onclick="calculateCustomPlan()">计算自定义方案</button>
+        </div>
+
+        <div class="results" id="couponResults">
+          <div class="result-item">
+            <div class="result-label">获得蛋币</div>
+            <div class="result-value" id="couponEggCoins">-</div>
+          </div>
+          <div class="result-item" id="couponCouponItem">
+            <div class="result-label">无门槛优惠券</div>
+            <div class="result-value" id="couponCoupons">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">兑换后总金额（元）</div>
+            <div class="result-value" id="couponTotalReturn">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">赚取金额（元）</div>
+            <div class="result-value" id="couponProfit">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">折扣</div>
+            <div class="result-value" id="couponResultDiscount">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">实际折扣</div>
+            <div class="result-value" id="couponActualDiscount">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const rechargeTiers = [
+      { amount: 30, eggCoins: 318 },
+      { amount: 68, eggCoins: 725 },
+      { amount: 128, eggCoins: 1368 },
+      { amount: 198, eggCoins: 2118 },
+      { amount: 328, eggCoins: 3548 },
+      { amount: 648, eggCoins: 7068 }
+    ];
+
+    function showTab(tabName) {
+      // 隐藏所有标签页
+      document.getElementById('calculator-tab').style.display = 'none';
+      document.getElementById('coupon-tab').style.display = 'none';
+
+      // 移除所有侧边栏项目的活跃状态
+      document.querySelectorAll('.sidebar-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      // 显示选中的标签页
+      document.getElementById(tabName + '-tab').style.display = 'block';
+
+      // 激活选中的侧边栏项目
+      event.currentTarget.classList.add('active');
+    }
+
+    // 优惠券类型切换
+    document.querySelectorAll('input[name="couponType"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        if (this.value === 'discount') {
+          document.getElementById('discountInput').style.display = 'block';
+          document.getElementById('fixedInput').style.display = 'none';
+          document.getElementById('useTypeInput').style.display = 'block';
+          document.getElementById('couponAmountInput').style.display = 'block';
+        } else {
+          document.getElementById('discountInput').style.display = 'none';
+          document.getElementById('fixedInput').style.display = 'block';
+          document.getElementById('useTypeInput').style.display = 'none';
+          document.getElementById('couponAmountInput').style.display = 'none';
+        }
+      });
+    });
+
+    function getEggCoins(rechargeAmount) {
+      for (let i = rechargeTiers.length - 1; i >= 0; i--) {
+        if (rechargeAmount >= rechargeTiers[i].amount) {
+          return rechargeTiers[i].eggCoins;
+        }
+      }
+      return 0;
+    }
+
+    function getCoupons(actualPayment, isRebateDay) {
+      if (!isRebateDay) return 0;
+
+      let rate = 0;
+      if (actualPayment >= 30 && actualPayment <= 127) {
+        rate = 0.10;
+      } else if (actualPayment >= 128 && actualPayment <= 327) {
+        rate = 0.15;
+      } else if (actualPayment >= 328 && actualPayment <= 647) {
+        rate = 0.20;
+      } else if (actualPayment >= 648) {
+        rate = 0.25;
+      }
+
+      const couponValue = actualPayment * rate;
+      return Math.ceil(couponValue);
+    }
+
+    let eggCoinsResult = 0;
+    let couponsResult = 0;
+
+    function calculate() {
+      const rechargeAmount = parseFloat(document.getElementById('rechargeAmount').value);
+      const actualPayment = parseFloat(document.getElementById('actualPayment').value);
+      const dayType = document.querySelector('input[name="dayType"]:checked').value;
+      const isRebateDay = dayType === 'rebate';
+
+      if (isNaN(rechargeAmount) || isNaN(actualPayment)) {
+        alert('请输入有效的充值金额和实际付款金额');
+        return;
+      }
+
+      eggCoinsResult = getEggCoins(rechargeAmount);
+      couponsResult = getCoupons(actualPayment, isRebateDay);
+
+      document.getElementById('eggCoins').textContent = eggCoinsResult + ' 蛋币';
+      document.getElementById('coupons').textContent = couponsResult + ' 张';
+
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.classList.add('show');
+
+      document.getElementById('couponItem').style.display = isRebateDay ? 'block' : 'none';
+      document.getElementById('totalReturnItem').style.display = 'none';
+      document.getElementById('profitItem').style.display = 'none';
+      document.getElementById('discountItem').style.display = 'none';
+      document.getElementById('actualDiscountItem').style.display = 'none';
+    }
+
+    function calculateProfit() {
+      const eggRate = parseFloat(document.getElementById('eggRate').value);
+      const couponRate = parseFloat(document.getElementById('couponRate').value);
+      const actualPayment = parseFloat(document.getElementById('actualPayment').value);
+      const dayType = document.querySelector('input[name="dayType"]:checked').value;
+      const isRebateDay = dayType === 'rebate';
+
+      if (eggCoinsResult === 0) {
+        alert('请先点击"计算"按钮');
+        return;
+      }
+
+      if (isNaN(eggRate) || (isRebateDay && isNaN(couponRate))) {
+        alert('请输入有效的兑换比例');
+        return;
+      }
+
+      let totalReturn = eggCoinsResult * eggRate;
+      if (isRebateDay) {
+        totalReturn += couponsResult * couponRate;
+      }
+
+      const profit = totalReturn - actualPayment;
+      const newTotal = 0.1 * eggCoinsResult + couponsResult;
+      const discount = newTotal > 0 ? actualPayment / newTotal : 0;
+
+      document.getElementById('totalReturn').textContent = totalReturn.toFixed(2) + ' 元';
+      const profitElement = document.getElementById('profit');
+      profitElement.textContent = profit.toFixed(2) + ' 元';
+
+      profitElement.classList.remove('profit-positive', 'profit-negative', 'profit-zero');
+      if (profit > 0) {
+        profitElement.classList.add('profit-positive');
+      } else if (profit < 0) {
+        profitElement.classList.add('profit-negative');
+      } else {
+        profitElement.classList.add('profit-zero');
+      }
+
+      document.getElementById('discount').textContent = discount.toFixed(4) + ' 折';
+
+      // 显示与优惠券分析相同的折扣计算方式
+      const discountRate = newTotal > 0 ? actualPayment / newTotal : 0;
+      document.getElementById('actualDiscount').textContent = discountRate.toFixed(4) + ' 折';
+
+      document.getElementById('totalReturnItem').style.display = 'block';
+      document.getElementById('profitItem').style.display = 'block';
+      document.getElementById('discountItem').style.display = 'block';
+      document.getElementById('actualDiscountItem').style.display = 'block';
+    }
+
+    function analyzeCoupon() {
+      try {
+        const couponType = document.querySelector('input[name="couponType"]:checked').value;
+        let useType = 'multiple';
+        let couponAmount = 0;
+        const dayType = document.querySelector('input[name="couponDayType"]:checked').value;
+        const isRebateDay = dayType === 'rebate';
+
+        let couponDiscount = 0;
+        let fixedAmount = 0;
+        let minAmount = 0;
+
+        if (couponType === 'discount') {
+          useType = document.querySelector('input[name="useType"]:checked').value;
+          couponAmount = parseFloat(document.getElementById('couponAmount').value);
+          couponDiscount = parseFloat(document.getElementById('couponDiscount').value);
+          if (isNaN(couponDiscount)) {
+            alert('请输入有效的折扣值');
+            return;
+          }
+          if (couponDiscount >= 1) {
+            alert('优惠券折扣必须小于1，例如75折应输入0.75');
+            return;
+          }
+          if (couponDiscount <= 0) {
+            alert('优惠券折扣必须大于0');
+            return;
+          }
+          if (isNaN(couponAmount)) {
+            alert('请输入有效的可抵金额');
+            return;
+          }
+          if (couponAmount < 0) {
+            alert('可抵金额必须大于等于0');
+            return;
+          }
+        } else {
+          // 金额券：优惠金额就是可抵金额，强制单次使用
+          useType = 'single';
+          minAmount = parseFloat(document.getElementById('minAmount').value);
+          fixedAmount = parseFloat(document.getElementById('fixedAmount').value);
+          couponAmount = fixedAmount; // 优惠金额就是可抵金额
+          if (isNaN(minAmount)) {
+            alert('请输入有效的使用门槛');
+            return;
+          }
+          if (minAmount <= 0) {
+            alert('使用门槛必须大于0');
+            return;
+          }
+          if (isNaN(fixedAmount)) {
+            alert('请输入有效的优惠金额');
+            return;
+          }
+          if (fixedAmount <= 0) {
+            alert('优惠金额必须大于0');
+            return;
+          }
+        }
+
+        console.log('优惠券类型:', couponType);
+        console.log('使用类型:', useType);
+        console.log('可抵金额:', couponAmount);
+        if (couponType === 'discount') {
+          console.log('优惠券折扣:', couponDiscount);
+        } else {
+          console.log('使用门槛:', minAmount);
+          console.log('优惠金额:', fixedAmount);
+        }
+
+        // 默认兑换比例
+        const defaultEggRate = 0.075;
+        const defaultCouponRate = 0.75;
+
+        // 分析所有充值档位和可能的组合
+        let bestProfitOption = null;
+        let bestDiscountOption = null;
+        let maxProfit = -Infinity;
+        let bestDiscount = Infinity; // 折扣越小越好
+
+        // 分析单个充值档位
+        for (const tier of rechargeTiers) {
+          // 计算使用优惠券后的实际付款金额
+          const originalAmount = tier.amount;
+          let remainingCouponAmount = couponAmount;
+          let actualDiscount = 0;
+          let actualPayment = originalAmount;
+
+          if (couponType === 'discount') {
+            // 折扣券计算
+            const discountAmount = originalAmount * (1 - couponDiscount);
+            actualDiscount = Math.min(discountAmount, couponAmount);
+            actualPayment = originalAmount - actualDiscount;
+          } else {
+            // 金额券计算：只有达到使用门槛才能使用
+            if (originalAmount >= minAmount) {
+              actualDiscount = Math.min(fixedAmount, couponAmount);
+              actualPayment = originalAmount - actualDiscount;
+            } else {
+              // 未达到使用门槛，不使用优惠券
+              actualDiscount = 0;
+              actualPayment = originalAmount;
+            }
+          }
+
+          if (useType === 'single') {
+            // 单次使用：无论抵扣多少，优惠券都消失
+            remainingCouponAmount = 0;
+          } else {
+            // 多次使用：剩余可抵金额
+            remainingCouponAmount = couponAmount - actualDiscount;
+          }
+
+          // 计算获得的蛋币和无门槛优惠券
+          const eggCoins = tier.eggCoins;
+          const coupons = getCoupons(actualPayment, isRebateDay);
+
+          // 计算总价值
+          let totalValue = eggCoins * defaultEggRate;
+          if (isRebateDay) {
+            totalValue += coupons * defaultCouponRate;
+          }
+
+          // 计算利润
+          const profit = totalValue - actualPayment;
+
+          // 计算折扣
+          const newTotal = 0.1 * eggCoins + coupons;
+          const discount = newTotal > 0 ? actualPayment / newTotal : 0;
+          // 计算实际折扣比例（实际付款/原价）
+          const actualDiscountRate = actualPayment / originalAmount;
+
+          // 记录利润最优方案
+          if (profit > maxProfit) {
+            maxProfit = profit;
+            bestProfitOption = {
+              tier: tier,
+              actualPayment: actualPayment,
+              eggCoins: eggCoins,
+              coupons: coupons,
+              totalValue: totalValue,
+              profit: profit,
+              discount: discount,
+              actualDiscountRate: actualDiscountRate,
+              remainingCouponAmount: remainingCouponAmount,
+              combination: [tier.amount] // 单个充值
+            };
+          }
+
+          // 记录折扣最优方案
+          if (discount < bestDiscount && discount > 0) {
+            bestDiscount = discount;
+            bestDiscountOption = {
+              tier: tier,
+              actualPayment: actualPayment,
+              eggCoins: eggCoins,
+              coupons: coupons,
+              totalValue: totalValue,
+              profit: profit,
+              discount: discount,
+              actualDiscountRate: actualDiscountRate,
+              remainingCouponAmount: remainingCouponAmount,
+              combination: [tier.amount] // 单个充值
+            };
+          }
+        }
+
+        // 分析组合充值（最多组合3次，避免计算量过大）
+        if (useType === 'multiple' && couponType === 'discount') {
+          // 尝试不同的组合
+          for (let i = 0; i < rechargeTiers.length; i++) {
+            const tier1 = rechargeTiers[i];
+
+            // 多次相同档位（最多3次）
+            let remainingCoupon = couponAmount;
+            let totalActualPayment = 0;
+            let totalEggCoins = 0;
+            let totalCoupons = 0;
+            let combination = [];
+            let validCombination = true;
+
+            // 计算多次充值的情况
+            for (let j = 0; j < 3; j++) {
+              const originalAmount = tier1.amount;
+              const discountAmount = originalAmount * (1 - couponDiscount);
+              const actualDiscount = Math.min(discountAmount, remainingCoupon);
+              const actualPayment = originalAmount - actualDiscount;
+
+              // 计算本次充值的折扣
+              const eggCoins = tier1.eggCoins;
+              const coupons = getCoupons(actualPayment, isRebateDay);
+              const newTotal = 0.1 * eggCoins + coupons;
+              const stepDiscount = newTotal > 0 ? actualPayment / newTotal : 0;
+
+              // 检查折扣是否高于0.67
+              if (stepDiscount > 0.67) {
+                validCombination = false;
+                break;
+              }
+
+              totalActualPayment += actualPayment;
+              totalEggCoins += eggCoins;
+              totalCoupons += coupons;
+              remainingCoupon -= actualDiscount;
+              combination.push(tier1.amount);
+
+              if (remainingCoupon <= 0) break;
+            }
+
+            if (combination.length > 1 && validCombination) {
+              // 计算总价值
+              let totalValue = totalEggCoins * defaultEggRate;
+              if (isRebateDay) {
+                totalValue += totalCoupons * defaultCouponRate;
+              }
+
+              // 计算利润
+              const profit = totalValue - totalActualPayment;
+
+              // 计算折扣
+              const newTotal = 0.1 * totalEggCoins + totalCoupons;
+              const discount = newTotal > 0 ? totalActualPayment / newTotal : 0;
+
+              // 记录利润最优方案
+              if (profit > maxProfit) {
+                maxProfit = profit;
+                bestProfitOption = {
+                  tier: { amount: totalActualPayment, eggCoins: totalEggCoins },
+                  actualPayment: totalActualPayment,
+                  eggCoins: totalEggCoins,
+                  coupons: totalCoupons,
+                  totalValue: totalValue,
+                  profit: profit,
+                  discount: discount,
+                  actualDiscountRate: totalActualPayment / (combination.reduce((a, b) => a + b, 0)),
+                  remainingCouponAmount: remainingCoupon,
+                  combination: combination // 组合充值
+                };
+              }
+
+              // 记录折扣最优方案
+              if (discount < bestDiscount && discount > 0) {
+                bestDiscount = discount;
+                bestDiscountOption = {
+                  tier: { amount: totalActualPayment, eggCoins: totalEggCoins },
+                  actualPayment: totalActualPayment,
+                  eggCoins: totalEggCoins,
+                  coupons: totalCoupons,
+                  totalValue: totalValue,
+                  profit: profit,
+                  discount: discount,
+                  actualDiscountRate: totalActualPayment / (combination.reduce((a, b) => a + b, 0)),
+                  remainingCouponAmount: remainingCoupon,
+                  combination: combination // 组合充值
+                };
+              }
+            }
+
+            // 尝试2次相同档位的情况（单独处理，确保不被遗漏）
+            remainingCoupon = couponAmount;
+            totalActualPayment = 0;
+            totalEggCoins = 0;
+            totalCoupons = 0;
+            combination = [];
+            validCombination = true;
+
+            for (let j = 0; j < 2; j++) {
+              const originalAmount = tier1.amount;
+              const discountAmount = originalAmount * (1 - couponDiscount);
+              const actualDiscount = Math.min(discountAmount, remainingCoupon);
+              const actualPayment = originalAmount - actualDiscount;
+
+              // 计算本次充值的折扣
+              const eggCoins = tier1.eggCoins;
+              const coupons = getCoupons(actualPayment, isRebateDay);
+              const newTotal = 0.1 * eggCoins + coupons;
+              const stepDiscount = newTotal > 0 ? actualPayment / newTotal : 0;
+
+              // 检查折扣是否高于0.67
+              if (stepDiscount > 0.67) {
+                validCombination = false;
+                break;
+              }
+
+              totalActualPayment += actualPayment;
+              totalEggCoins += eggCoins;
+              totalCoupons += coupons;
+              remainingCoupon -= actualDiscount;
+              combination.push(tier1.amount);
+
+              if (remainingCoupon <= 0) break;
+            }
+
+            if (combination.length === 2 && validCombination) {
+              // 计算总价值
+              let totalValue = totalEggCoins * defaultEggRate;
+              if (isRebateDay) {
+                totalValue += totalCoupons * defaultCouponRate;
+              }
+
+              // 计算利润
+              const profit = totalValue - totalActualPayment;
+
+              // 计算折扣
+              const newTotal = 0.1 * totalEggCoins + totalCoupons;
+              const discount = newTotal > 0 ? totalActualPayment / newTotal : 0;
+
+              // 记录利润最优方案
+              if (profit > maxProfit) {
+                maxProfit = profit;
+                bestProfitOption = {
+                  tier: { amount: totalActualPayment, eggCoins: totalEggCoins },
+                  actualPayment: totalActualPayment,
+                  eggCoins: totalEggCoins,
+                  coupons: totalCoupons,
+                  totalValue: totalValue,
+                  profit: profit,
+                  discount: discount,
+                  actualDiscountRate: totalActualPayment / (combination.reduce((a, b) => a + b, 0)),
+                  remainingCouponAmount: remainingCoupon,
+                  combination: combination // 组合充值
+                };
+              }
+
+              // 记录折扣最优方案
+              if (discount < bestDiscount && discount > 0) {
+                bestDiscount = discount;
+                bestDiscountOption = {
+                  tier: { amount: totalActualPayment, eggCoins: totalEggCoins },
+                  actualPayment: totalActualPayment,
+                  eggCoins: totalEggCoins,
+                  coupons: totalCoupons,
+                  totalValue: totalValue,
+                  profit: profit,
+                  discount: discount,
+                  actualDiscountRate: totalActualPayment / (combination.reduce((a, b) => a + b, 0)),
+                  remainingCouponAmount: remainingCoupon,
+                  combination: combination // 组合充值
+                };
+              }
+            }
+
+            // 尝试不同档位的组合
+            for (let j = i + 1; j < rechargeTiers.length; j++) {
+              const tier2 = rechargeTiers[j];
+              let remainingCoupon = couponAmount;
+              let totalActualPayment = 0;
+              let totalEggCoins = 0;
+              let totalCoupons = 0;
+              let combination = [];
+              let validCombination = true;
+
+              // 先充tier1
+              const discountAmount1 = tier1.amount * (1 - couponDiscount);
+              const actualDiscount1 = Math.min(discountAmount1, remainingCoupon);
+              const actualPayment1 = tier1.amount - actualDiscount1;
+
+              // 计算本次充值的折扣
+              const eggCoins1 = tier1.eggCoins;
+              const coupons1 = getCoupons(actualPayment1, isRebateDay);
+              const newTotal1 = 0.1 * eggCoins1 + coupons1;
+              const stepDiscount1 = newTotal1 > 0 ? actualPayment1 / newTotal1 : 0;
+
+              // 检查折扣是否高于0.67
+              if (stepDiscount1 > 0.67) {
+                validCombination = false;
+              } else {
+                totalActualPayment += actualPayment1;
+                totalEggCoins += eggCoins1;
+                totalCoupons += coupons1;
+                remainingCoupon -= actualDiscount1;
+                combination.push(tier1.amount);
+
+                if (remainingCoupon > 0) {
+                  // 再充tier2
+                  const discountAmount2 = tier2.amount * (1 - couponDiscount);
+                  const actualDiscount2 = Math.min(discountAmount2, remainingCoupon);
+                  const actualPayment2 = tier2.amount - actualDiscount2;
+
+                  // 计算本次充值的折扣
+                  const eggCoins2 = tier2.eggCoins;
+                  const coupons2 = getCoupons(actualPayment2, isRebateDay);
+                  const newTotal2 = 0.1 * eggCoins2 + coupons2;
+                  const stepDiscount2 = newTotal2 > 0 ? actualPayment2 / newTotal2 : 0;
+
+                  // 检查折扣是否高于0.67
+                  if (stepDiscount2 > 0.67) {
+                    validCombination = false;
+                  } else {
+                    totalActualPayment += actualPayment2;
+                    totalEggCoins += eggCoins2;
+                    totalCoupons += coupons2;
+                    remainingCoupon -= actualDiscount2;
+                    combination.push(tier2.amount);
+                  }
+                }
+              }
+
+              if (combination.length > 1 && validCombination) {
+                // 计算总价值
+                let totalValue = totalEggCoins * defaultEggRate;
+                if (isRebateDay) {
+                  totalValue += totalCoupons * defaultCouponRate;
+                }
+
+                // 计算利润
+                const profit = totalValue - totalActualPayment;
+
+                // 计算折扣
+                const newTotal = 0.1 * totalEggCoins + totalCoupons;
+                const discount = newTotal > 0 ? totalActualPayment / newTotal : 0;
+
+                // 记录利润最优方案
+                if (profit > maxProfit) {
+                  maxProfit = profit;
+                  bestProfitOption = {
+                    tier: { amount: totalActualPayment, eggCoins: totalEggCoins },
+                    actualPayment: totalActualPayment,
+                    eggCoins: totalEggCoins,
+                    coupons: totalCoupons,
+                    totalValue: totalValue,
+                    profit: profit,
+                    discount: discount,
+                    actualDiscountRate: totalActualPayment / (combination.reduce((a, b) => a + b, 0)),
+                    remainingCouponAmount: remainingCoupon,
+                    combination: combination // 组合充值
+                  };
+                }
+
+                // 记录折扣最优方案
+                if (discount < bestDiscount && discount > 0) {
+                  bestDiscount = discount;
+                  bestDiscountOption = {
+                    tier: { amount: totalActualPayment, eggCoins: totalEggCoins },
+                    actualPayment: totalActualPayment,
+                    eggCoins: totalEggCoins,
+                    coupons: totalCoupons,
+                    totalValue: totalValue,
+                    profit: profit,
+                    discount: discount,
+                    actualDiscountRate: totalActualPayment / (combination.reduce((a, b) => a + b, 0)),
+                    remainingCouponAmount: remainingCoupon,
+                    combination: combination // 组合充值
+                  };
+                }
+              }
+            }
+
+            // 尝试三种不同档位的组合
+            for (let j = i + 1; j < rechargeTiers.length; j++) {
+              const tier2 = rechargeTiers[j];
+              for (let k = j + 1; k < rechargeTiers.length; k++) {
+                const tier3 = rechargeTiers[k];
+                let remainingCoupon = couponAmount;
+                let totalActualPayment = 0;
+                let totalEggCoins = 0;
+                let totalCoupons = 0;
+                let combination = [];
+                let validCombination = true;
+
+                // 先充tier1
+                const discountAmount1 = tier1.amount * (1 - couponDiscount);
+                const actualDiscount1 = Math.min(discountAmount1, remainingCoupon);
+                const actualPayment1 = tier1.amount - actualDiscount1;
+
+                // 计算本次充值的折扣
+                const eggCoins1 = tier1.eggCoins;
+                const coupons1 = getCoupons(actualPayment1, isRebateDay);
+                const newTotal1 = 0.1 * eggCoins1 + coupons1;
+                const stepDiscount1 = newTotal1 > 0 ? actualPayment1 / newTotal1 : 0;
+
+                // 检查折扣是否高于0.67
+                if (stepDiscount1 > 0.67) {
+                  validCombination = false;
+                } else {
+                  totalActualPayment += actualPayment1;
+                  totalEggCoins += eggCoins1;
+                  totalCoupons += coupons1;
+                  remainingCoupon -= actualDiscount1;
+                  combination.push(tier1.amount);
+
+                  if (remainingCoupon > 0) {
+                    // 再充tier2
+                    const discountAmount2 = tier2.amount * (1 - couponDiscount);
+                    const actualDiscount2 = Math.min(discountAmount2, remainingCoupon);
+                    const actualPayment2 = tier2.amount - actualDiscount2;
+
+                    // 计算本次充值的折扣
+                    const eggCoins2 = tier2.eggCoins;
+                    const coupons2 = getCoupons(actualPayment2, isRebateDay);
+                    const newTotal2 = 0.1 * eggCoins2 + coupons2;
+                    const stepDiscount2 = newTotal2 > 0 ? actualPayment2 / newTotal2 : 0;
+
+                    // 检查折扣是否高于0.67
+                    if (stepDiscount2 > 0.67) {
+                      validCombination = false;
+                    } else {
+                      totalActualPayment += actualPayment2;
+                      totalEggCoins += eggCoins2;
+                      totalCoupons += coupons2;
+                      remainingCoupon -= actualDiscount2;
+                      combination.push(tier2.amount);
+
+                      if (remainingCoupon > 0) {
+                        // 最后充tier3
+                        const discountAmount3 = tier3.amount * (1 - couponDiscount);
+                        const actualDiscount3 = Math.min(discountAmount3, remainingCoupon);
+                        const actualPayment3 = tier3.amount - actualDiscount3;
+
+                        // 计算本次充值的折扣
+                        const eggCoins3 = tier3.eggCoins;
+                        const coupons3 = getCoupons(actualPayment3, isRebateDay);
+                        const newTotal3 = 0.1 * eggCoins3 + coupons3;
+                        const stepDiscount3 = newTotal3 > 0 ? actualPayment3 / newTotal3 : 0;
+
+                        // 检查折扣是否高于0.67
+                        if (stepDiscount3 > 0.67) {
+                          validCombination = false;
+                        } else {
+                          totalActualPayment += actualPayment3;
+                          totalEggCoins += eggCoins3;
+                          totalCoupons += coupons3;
+                          remainingCoupon -= actualDiscount3;
+                          combination.push(tier3.amount);
+                        }
+                      }
+                    }
+                  }
+                }
+
+                if (combination.length > 1 && validCombination) {
+                  // 计算总价值
+                  let totalValue = totalEggCoins * defaultEggRate;
+                  if (isRebateDay) {
+                    totalValue += totalCoupons * defaultCouponRate;
+                  }
+
+                  // 计算利润
+                  const profit = totalValue - totalActualPayment;
+
+                  // 计算折扣
+                  const newTotal = 0.1 * totalEggCoins + totalCoupons;
+                  const discount = newTotal > 0 ? totalActualPayment / newTotal : 0;
+
+                  // 记录利润最优方案
+                  if (profit > maxProfit) {
+                    maxProfit = profit;
+                    bestProfitOption = {
+                      tier: { amount: totalActualPayment, eggCoins: totalEggCoins },
+                      actualPayment: totalActualPayment,
+                      eggCoins: totalEggCoins,
+                      coupons: totalCoupons,
+                      totalValue: totalValue,
+                      profit: profit,
+                      discount: discount,
+                      actualDiscountRate: totalActualPayment / (combination.reduce((a, b) => a + b, 0)),
+                      remainingCouponAmount: remainingCoupon,
+                      combination: combination // 组合充值
+                    };
+                  }
+
+                  // 记录折扣最优方案
+                  if (discount < bestDiscount && discount > 0) {
+                    bestDiscount = discount;
+                    bestDiscountOption = {
+                      tier: { amount: totalActualPayment, eggCoins: totalEggCoins },
+                      actualPayment: totalActualPayment,
+                      eggCoins: totalEggCoins,
+                      coupons: totalCoupons,
+                      totalValue: totalValue,
+                      profit: profit,
+                      discount: discount,
+                      actualDiscountRate: totalActualPayment / (combination.reduce((a, b) => a + b, 0)),
+                      remainingCouponAmount: remainingCoupon,
+                      combination: combination // 组合充值
+                    };
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // 显示最优方案
+        if (bestProfitOption) {
+          // 始终选择利润最优方案
+          let finalOption = bestProfitOption;
+          let recommendationReason = '利润最优';
+
+          // 显示最终推荐方案
+          document.getElementById('eggCoins').textContent = finalOption.eggCoins + ' 蛋币';
+          document.getElementById('coupons').textContent = finalOption.coupons + ' 张';
+          document.getElementById('totalReturn').textContent = finalOption.totalValue.toFixed(2) + ' 元';
+
+          const profitElement = document.getElementById('profit');
+          profitElement.textContent = finalOption.profit.toFixed(2) + ' 元';
+          profitElement.classList.remove('profit-positive', 'profit-negative', 'profit-zero');
+          if (finalOption.profit > 0) {
+            profitElement.classList.add('profit-positive');
+          } else if (finalOption.profit < 0) {
+            profitElement.classList.add('profit-negative');
+          } else {
+            profitElement.classList.add('profit-zero');
+          }
+
+          document.getElementById('discount').textContent = finalOption.discount.toFixed(4) + ' 折';
+          document.getElementById('actualDiscount').textContent = finalOption.discount.toFixed(4) + ' 折';
+
+          // 显示结果
+          const resultsDiv = document.getElementById('results');
+          resultsDiv.classList.add('show');
+          document.getElementById('couponItem').style.display = isRebateDay ? 'block' : 'none';
+          document.getElementById('totalReturnItem').style.display = 'block';
+          document.getElementById('profitItem').style.display = 'block';
+          document.getElementById('discountItem').style.display = 'block';
+          document.getElementById('actualDiscountItem').style.display = 'block';
+
+          // 收集所有方案并排序
+          const allOptions = [];
+
+          // 添加利润最优方案
+          if (bestProfitOption) {
+            allOptions.push({
+              ...bestProfitOption,
+              type: '利润最优'
+            });
+          }
+
+          // 添加折扣最优方案
+          if (bestDiscountOption && JSON.stringify(bestDiscountOption.combination) !== JSON.stringify(bestProfitOption.combination)) {
+            allOptions.push({
+              ...bestDiscountOption,
+              type: '折扣最优'
+            });
+          }
+
+          // 为了确保有三个方案，我们需要收集更多的方案
+          // 分析所有单个充值档位
+          for (const tier of rechargeTiers) {
+            // 计算使用优惠券后的实际付款金额
+            let actualPayment;
+            let remainingCoupon = couponAmount;
+
+            if (couponType === 'discount') {
+              // 折扣券
+              const discountAmount = tier.amount * (1 - couponDiscount);
+              const actualDiscount = Math.min(discountAmount, remainingCoupon);
+              actualPayment = tier.amount - actualDiscount;
+              remainingCoupon -= actualDiscount;
+            } else {
+              // 金额券
+              if (tier.amount >= couponThreshold) {
+                actualPayment = tier.amount - couponFixedAmount;
+              } else {
+                actualPayment = tier.amount;
+              }
+            }
+
+            // 计算获得的蛋币和优惠券
+            const eggCoins = tier.eggCoins;
+            const coupons = getCoupons(actualPayment, isRebateDay);
+
+            // 计算总价值
+            let totalValue = eggCoins * defaultEggRate;
+            if (isRebateDay) {
+              totalValue += coupons * defaultCouponRate;
+            }
+
+            // 计算利润
+            const profit = totalValue - actualPayment;
+
+            // 计算折扣
+            const newTotal = 0.1 * eggCoins + coupons;
+            const discount = newTotal > 0 ? actualPayment / newTotal : 0;
+
+            // 检查折扣是否高于0.67
+            if (discount <= 0.67) {
+              // 创建方案对象
+              const option = {
+                tier: tier,
+                actualPayment: actualPayment,
+                eggCoins: eggCoins,
+                coupons: coupons,
+                totalValue: totalValue,
+                profit: profit,
+                discount: discount,
+                actualDiscountRate: actualPayment / tier.amount,
+                remainingCouponAmount: remainingCoupon,
+                combination: null,
+                type: '单次充值'
+              };
+
+              // 检查是否已经存在相同的方案
+              const exists = allOptions.some(existingOption =>
+                existingOption.combination === null && existingOption.tier.amount === tier.amount
+              );
+
+              if (!exists) {
+                allOptions.push(option);
+              }
+            }
+          }
+
+          // 按照综合评分排序（利润越高、折扣越小越好）
+          allOptions.sort((a, b) => {
+            // 综合评分 = 利润 * 0.6 + (1 - 折扣) * 0.4
+            const scoreA = a.profit * 0.6 + (1 - a.discount) * 0.4;
+            const scoreB = b.profit * 0.6 + (1 - b.discount) * 0.4;
+            return scoreB - scoreA;
+          });
+
+          // 显示前三个最优解
+          const topOptions = allOptions.slice(0, 3);
+
+          // 生成HTML内容
+          let modalContent = `
+            <div class="modal-header">
+              <h3>📊 最优充值方案分析</h3>
+              <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+          `;
+
+          topOptions.forEach((option, index) => {
+            const rankEmojis = ['🥇', '🥈', '🥉'];
+            const rankText = ['最佳', '次佳', '第三'];
+
+            modalContent += `
+              <div class="option-card">
+                <div class="option-header">
+                  <span class="rank">${rankEmojis[index]} ${rankText[index]}方案（${option.type}）</span>
+                </div>
+                <div class="option-details">
+                  <p class="recharge-type">
+                    ${option.combination && option.combination.length > 1 ?
+                `组合充值：${option.combination.join('元 + ')}元` :
+                `单次充值：${option.tier.amount}元`}
+                  </p>
+                  ${option.combination && option.combination.length > 1 ?
+                `<p>总充值金额：${option.combination.reduce((a, b) => a + b, 0)}元</p>` : ''}
+            `;
+
+            // 为组合充值添加每步的详细数据
+            if (option.combination && option.combination.length > 1) {
+              modalContent += `
+                <div class="combination-steps">
+                  <h4>详细充值步骤：</h4>
+                  <div class="steps-container">
+              `;
+
+              let stepRemainingCoupon = couponAmount;
+              let stepTotalPayment = 0;
+              let stepTotalEggCoins = 0;
+              let stepTotalCoupons = 0;
+
+              option.combination.forEach((amount, stepIndex) => {
+                // 找到对应的充值档位
+                const tier = rechargeTiers.find(t => t.amount === amount);
+                if (tier) {
+                  // 计算本次充值的实际付款
+                  let stepActualPayment;
+                  let stepDiscount;
+
+                  if (couponType === 'discount') {
+                    // 折扣券
+                    const discountAmount = amount * (1 - couponDiscount);
+                    const actualDiscount = Math.min(discountAmount, stepRemainingCoupon);
+                    stepActualPayment = amount - actualDiscount;
+                    stepRemainingCoupon -= actualDiscount;
+                  } else {
+                    // 金额券
+                    if (amount >= couponThreshold) {
+                      stepActualPayment = amount - couponFixedAmount;
+                    } else {
+                      stepActualPayment = amount;
+                    }
+                  }
+
+                  // 计算本次获得的优惠券
+                  const stepCoupons = getCoupons(stepActualPayment, isRebateDay);
+
+                  // 计算本次的折扣
+                  const stepNewTotal = 0.1 * tier.eggCoins + stepCoupons;
+                  stepDiscount = stepNewTotal > 0 ? stepActualPayment / stepNewTotal : 0;
+
+                  // 更新累计值
+                  stepTotalPayment += stepActualPayment;
+                  stepTotalEggCoins += tier.eggCoins;
+                  stepTotalCoupons += stepCoupons;
+
+                  modalContent += `
+                    <div class="step-item">
+                      <h5>第${stepIndex + 1}步：${amount}元充值</h5>
+                      <p>实际付款：<span class="value">${stepActualPayment.toFixed(2)}元</span></p>
+                      <p>获得蛋币：<span class="value">${tier.eggCoins}个</span></p>
+                      <p>获得优惠券：<span class="value">${stepCoupons}张</span></p>
+                      <p>本次折扣：<span class="value">${stepDiscount.toFixed(4)}折</span></p>
+                      <p>剩余可抵金额：<span class="value">${stepRemainingCoupon.toFixed(2)}元</span></p>
+                    </div>
+                  `;
+                }
+              });
+
+              modalContent += `
+                  </div>
+                </div>
+              `;
+            }
+
+            modalContent += `
+                  <p>实际付款：<span class="value">${option.actualPayment.toFixed(2)}元</span></p>
+                  <p>获得蛋币：<span class="value">${option.eggCoins}个</span></p>
+                  <p>获得优惠券：<span class="value">${option.coupons}张</span></p>
+                  <p>总价值：<span class="value">${option.totalValue.toFixed(2)}元</span></p>
+                  <p>预估利润：<span class="value ${option.profit > 0 ? 'positive' : option.profit < 0 ? 'negative' : 'zero'}">${option.profit.toFixed(2)}元</span></p>
+                  <p>实际折扣：<span class="value">${option.discount.toFixed(4)}折</span></p>
+                  <p>剩余可抵金额：<span class="value">${option.remainingCouponAmount.toFixed(2)}元</span></p>
+                </div>
+              </div>
+            `;
+          });
+
+          modalContent += `
+            </div>
+          `;
+
+          // 创建模态框
+          const modal = document.createElement('div');
+          modal.id = 'result-modal';
+          modal.className = 'modal';
+          modal.innerHTML = `
+            <div class="modal-content">
+              ${modalContent}
+            </div>
+          `;
+
+          // 添加到页面
+          document.body.appendChild(modal);
+
+          // 显示模态框
+          setTimeout(() => {
+            modal.classList.add('show');
+          }, 10);
+
+          // 关闭模态框函数
+          window.closeModal = function () {
+            modal.classList.remove('show');
+            setTimeout(() => {
+              document.body.removeChild(modal);
+            }, 300);
+          };
+
+          // 点击模态框外部关闭
+          modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+              modal.classList.remove('show');
+              setTimeout(() => {
+                document.body.removeChild(modal);
+              }, 300);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('分析优惠券时出错:', error);
+        alert('分析过程中出现错误，请检查控制台日志');
+      }
+    }
+
+    // 计算自定义充值方案
+    function calculateCustomPlan() {
+      try {
+        // 蛋币和优惠券兑换比例（默认值）
+        const defaultEggRate = 0.075;
+        const defaultCouponRate = 0.75;
+
+        // 获取优惠券信息
+        const couponType = document.querySelector('input[name="couponType"]:checked').value;
+        const couponDiscount = parseFloat(document.getElementById('couponDiscount').value) || 0;
+        const couponFixedAmount = parseFloat(document.getElementById('fixedAmount').value) || 0;
+        const couponThreshold = parseFloat(document.getElementById('minAmount').value) || 0;
+        const couponAmount = parseFloat(document.getElementById('couponAmount').value) || 0;
+        const isRebateDay = document.querySelector('input[name="couponDayType"]:checked').value === 'rebate';
+
+        // 获取自定义充值方案
+        const customPlan1 = parseFloat(document.getElementById('customPlan1').value) || 0;
+        const customPlan2 = parseFloat(document.getElementById('customPlan2').value) || 0;
+        const customPlan3 = parseFloat(document.getElementById('customPlan3').value) || 0;
+
+        // 收集有效充值金额
+        const planAmounts = [customPlan1, customPlan2, customPlan3].filter(amount => amount > 0);
+
+        if (planAmounts.length === 0) {
+          alert('请至少填写一个充值金额');
+          return;
+        }
+
+        // 计算结果
+        let totalActualPayment = 0;
+        let totalEggCoins = 0;
+        let totalCoupons = 0;
+        let remainingCoupon = couponAmount;
+        const steps = [];
+
+        // 计算每一步充值
+        planAmounts.forEach((amount, index) => {
+          // 找到对应的充值档位
+          const tier = rechargeTiers.find(t => t.amount === amount) || {
+            amount: amount,
+            eggCoins: Math.floor(amount * 10) // 简单计算蛋币，实际应该根据档位计算
+          };
+
+          // 计算实际付款
+          let actualPayment;
+          if (couponType === 'discount') {
+            // 折扣券
+            const discountAmount = amount * (1 - couponDiscount);
+            const actualDiscount = Math.min(discountAmount, remainingCoupon);
+            actualPayment = amount - actualDiscount;
+            remainingCoupon -= actualDiscount;
+          } else {
+            // 金额券
+            if (amount >= couponThreshold) {
+              actualPayment = amount - couponFixedAmount;
+            } else {
+              actualPayment = amount;
+            }
+          }
+
+          // 计算获得的优惠券
+          const coupons = getCoupons(actualPayment, isRebateDay);
+
+          // 计算本次的折扣
+          const stepNewTotal = 0.1 * tier.eggCoins + coupons;
+          const stepDiscount = stepNewTotal > 0 ? actualPayment / stepNewTotal : 0;
+
+          // 更新累计值
+          totalActualPayment += actualPayment;
+          totalEggCoins += tier.eggCoins;
+          totalCoupons += coupons;
+
+          // 保存步骤信息
+          steps.push({
+            amount: amount,
+            actualPayment: actualPayment,
+            eggCoins: tier.eggCoins,
+            coupons: coupons,
+            discount: stepDiscount,
+            remainingCoupon: remainingCoupon
+          });
+        });
+
+        // 计算总价值和利润
+        let totalValue = totalEggCoins * defaultEggRate;
+        if (isRebateDay) {
+          totalValue += totalCoupons * defaultCouponRate;
+        }
+        const profit = totalValue - totalActualPayment;
+        const overallDiscount = (0.1 * totalEggCoins + totalCoupons) > 0 ? totalActualPayment / (0.1 * totalEggCoins + totalCoupons) : 0;
+
+        // 生成HTML内容
+        let modalContent = `
+          <div class="modal-header">
+            <h3>📋 自定义充值方案分析</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="option-card">
+              <div class="option-header">
+                <span class="rank">自定义方案</span>
+              </div>
+              <div class="option-details">
+                <p class="recharge-type">
+                  组合充值：${planAmounts.join('元 + ')}元
+                </p>
+                <p>总充值金额：${planAmounts.reduce((a, b) => a + b, 0)}元</p>
+        `;
+
+        // 添加详细充值步骤
+        if (steps.length > 1) {
+          modalContent += `
+            <div class="combination-steps">
+              <h4>详细充值步骤：</h4>
+              <div class="steps-container">
+          `;
+
+          steps.forEach((step, index) => {
+            modalContent += `
+              <div class="step-item">
+                <h5>第${index + 1}步：${step.amount}元充值</h5>
+                <p>实际付款：<span class="value">${step.actualPayment.toFixed(2)}元</span></p>
+                <p>获得蛋币：<span class="value">${step.eggCoins}个</span></p>
+                <p>获得优惠券：<span class="value">${step.coupons}张</span></p>
+                <p>本次折扣：<span class="value">${step.discount.toFixed(4)}折</span></p>
+                <p>剩余可抵金额：<span class="value">${step.remainingCoupon.toFixed(2)}元</span></p>
+              </div>
+            `;
+          });
+
+          modalContent += `
+              </div>
+            </div>
+          `;
+        }
+
+        // 添加总结果
+        modalContent += `
+                <p>实际付款：<span class="value">${totalActualPayment.toFixed(2)}元</span></p>
+                <p>获得蛋币：<span class="value">${totalEggCoins}个</span></p>
+                <p>获得优惠券：<span class="value">${totalCoupons}张</span></p>
+                <p>总价值：<span class="value">${totalValue.toFixed(2)}元</span></p>
+                <p>预估利润：<span class="value ${profit > 0 ? 'positive' : profit < 0 ? 'negative' : 'zero'}">${profit.toFixed(2)}元</span></p>
+                <p>实际折扣：<span class="value">${overallDiscount.toFixed(4)}折</span></p>
+                <p>剩余可抵金额：<span class="value">${remainingCoupon.toFixed(2)}元</span></p>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // 创建模态框
+        const modal = document.createElement('div');
+        modal.id = 'custom-result-modal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+          <div class="modal-content">
+            ${modalContent}
+          </div>
+        `;
+
+        // 添加到页面
+        document.body.appendChild(modal);
+
+        // 显示模态框
+        setTimeout(() => {
+          modal.classList.add('show');
+        }, 10);
+
+        // 关闭模态框函数
+        window.closeModal = function () {
+          modal.classList.remove('show');
+          setTimeout(() => {
+            document.body.removeChild(modal);
+          }, 300);
+        };
+
+        // 点击模态框外部关闭
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.remove('show');
+            setTimeout(() => {
+              document.body.removeChild(modal);
+            }, 300);
+          }
+        });
+
+        // 更新结果显示
+        document.getElementById('couponEggCoins').textContent = totalEggCoins + ' 蛋币';
+        document.getElementById('couponCoupons').textContent = totalCoupons + ' 张';
+        document.getElementById('couponTotalReturn').textContent = totalValue.toFixed(2) + ' 元';
+
+        const profitElement = document.getElementById('couponProfit');
+        profitElement.textContent = profit.toFixed(2) + ' 元';
+        profitElement.classList.remove('profit-positive', 'profit-negative', 'profit-zero');
+        if (profit > 0) {
+          profitElement.classList.add('profit-positive');
+        } else if (profit < 0) {
+          profitElement.classList.add('profit-negative');
+        } else {
+          profitElement.classList.add('profit-zero');
+        }
+
+        document.getElementById('couponResultDiscount').textContent = overallDiscount.toFixed(4) + ' 折';
+
+        // 显示结果
+        const resultsDiv = document.getElementById('couponResults');
+        resultsDiv.classList.add('show');
+        document.getElementById('couponCouponItem').style.display = isRebateDay ? 'block' : 'none';
+
+      } catch (error) {
+        console.error('计算自定义方案时出错:', error);
+        alert('计算过程中出现错误，请检查控制台日志');
+      }
+    }
+  </script>
+</body>
+
+</html>
