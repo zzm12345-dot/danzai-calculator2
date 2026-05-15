@@ -7,206 +7,209 @@
   <title>蛋仔派对充值折扣计算器</title>
   <style>
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
+    }
+
+    :root {
+      color-scheme: light;
+      --bg: #f5f5f7;
+      --panel: rgba(255, 255, 255, 0.82);
+      --panel-strong: rgba(255, 255, 255, 0.96);
+      --text: #1d1d1f;
+      --muted: #6e6e73;
+      --line: rgba(0, 0, 0, 0.1);
+      --blue: #007aff;
+      --blue-soft: rgba(0, 122, 255, 0.12);
+      --green: #34c759;
+      --red: #ff3b30;
+      --gray: #8e8e93;
+      --shadow: 0 22px 70px rgba(0, 0, 0, 0.12);
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f8f9fa;
       min-height: 100vh;
-      margin: 0;
-      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(0, 122, 255, 0.16), transparent 30%),
+        radial-gradient(circle at 86% 4%, rgba(52, 199, 89, 0.13), transparent 26%),
+        var(--bg);
+      color: var(--text);
+      padding: 32px;
+      letter-spacing: 0;
     }
 
     .container {
-      display: flex;
-      min-height: 100vh;
-      width: 100%;
-      max-width: 1200px;
+      width: min(1040px, 100%);
+      min-height: calc(100vh - 64px);
       margin: 0 auto;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .sidebar {
-      width: 220px;
-      background: #2c3e50;
-      color: white;
-      padding: 20px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .sidebar-item {
-      padding: 15px 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-left: 4px solid transparent;
-    }
-
-    .sidebar-item:hover {
-      background: #34495e;
-      border-left-color: #3498db;
-    }
-
-    .sidebar-item.active {
-      background: #34495e;
-      border-left-color: #3498db;
-      color: #3498db;
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      overflow: hidden;
     }
 
     .content {
-      flex: 1;
-      background: white;
-      padding: 30px;
-      overflow-y: auto;
+      padding: 42px;
     }
 
     h1 {
-      text-align: left;
-      color: #2c3e50;
-      margin-bottom: 30px;
-      font-size: 28px;
+      color: var(--text);
+      font-size: 34px;
       font-weight: 700;
-      padding-bottom: 15px;
-      border-bottom: 2px solid #ecf0f1;
+      letter-spacing: 0;
+      margin-bottom: 30px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
     }
 
     .form-group {
-      margin-bottom: 25px;
+      margin-bottom: 22px;
     }
 
     label {
       display: block;
-      margin-bottom: 10px;
-      color: #333;
+      color: var(--muted);
+      font-size: 13px;
       font-weight: 600;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0;
+      margin-bottom: 9px;
     }
 
     .radio-group {
-      display: flex;
-      gap: 15px;
-      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
     }
 
     .radio-option {
-      flex: 1;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 12px 16px;
-      border: 2px solid #f0f0f0;
-      border-radius: 25px;
+      min-height: 46px;
+      padding: 10px 14px;
+      background: rgba(118, 118, 128, 0.08);
+      border: 1px solid transparent;
+      border-radius: 14px;
+      color: var(--text);
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     .radio-option:hover {
-      border-color: #667eea;
-      background: rgba(102, 126, 234, 0.05);
+      background: rgba(118, 118, 128, 0.13);
+      transform: translateY(-1px);
     }
 
     .radio-option input[type="radio"] {
-      margin-right: 8px;
-      accent-color: #667eea;
       width: 16px;
       height: 16px;
+      margin-right: 8px;
+      accent-color: var(--blue);
+    }
+
+    .radio-option:has(input[type="radio"]:checked) {
+      background: var(--blue-soft);
+      border-color: rgba(0, 122, 255, 0.28);
     }
 
     input[type="number"],
     input[type="text"] {
       width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      height: 46px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
       font-size: 16px;
-      transition: all 0.3s ease;
-      background: white;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.88);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
 
     input[type="number"]:focus,
     input[type="text"]:focus {
-      outline: none;
-      border-color: #3498db;
-      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+      border-color: rgba(0, 122, 255, 0.65);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.14);
     }
 
     .btn {
       width: 100%;
-      padding: 14px;
-      background: #3498db;
-      color: white;
-      border: none;
-      border-radius: 6px;
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 15px;
+      background: var(--blue);
+      color: #fff;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 15px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      box-shadow: 0 10px 24px rgba(0, 122, 255, 0.24);
     }
 
     .btn:hover {
-      background: #2980b9;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+      background: #0a84ff;
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(0, 122, 255, 0.3);
     }
 
     .btn:active {
       transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(52, 152, 219, 0.3);
+      box-shadow: 0 8px 18px rgba(0, 122, 255, 0.2);
     }
 
     .btn-secondary {
-      background: #95a5a6;
-      margin-left: 10px;
+      background: rgba(118, 118, 128, 0.16);
+      color: var(--text);
+      box-shadow: none;
     }
 
     .btn-secondary:hover {
-      background: #7f8c8d;
-      box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
+      background: rgba(118, 118, 128, 0.22);
+      box-shadow: none;
     }
 
     .button-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
     }
 
     .custom-plan-inputs {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .custom-plan-inputs input {
-      flex: 1;
+      margin-bottom: 9px;
     }
 
     .hint {
+      color: var(--muted);
       font-size: 12px;
-      color: #666;
-      margin-top: 5px;
-      margin-bottom: 0;
+      line-height: 1.5;
     }
 
     .results {
-      margin-top: 25px;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 6px;
-      border: 1px solid #e0e0e0;
+      margin-top: 26px;
+      padding: 22px;
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 20px;
       opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.3s ease;
+      transform: translateY(8px);
+      transition: all 0.25s ease;
     }
 
     .results.show {
@@ -216,188 +219,64 @@
 
     .result-item {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #e0e0e0;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .result-item:first-child {
+      padding-top: 0;
     }
 
     .result-item:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
       padding-bottom: 0;
+      border-bottom: 0;
     }
 
     .result-label {
-      color: #555;
+      color: var(--muted);
       font-size: 14px;
       font-weight: 600;
     }
 
     .result-value {
-      color: #2c3e50;
+      color: var(--text);
       font-size: 18px;
       font-weight: 700;
+      text-align: right;
     }
 
-    .profit-positive {
-      color: #27ae60 !important;
+    .profit-positive,
+    .option-details .value.positive {
+      color: var(--green) !important;
     }
 
-    .profit-negative {
-      color: #e74c3c !important;
+    .profit-negative,
+    .option-details .value.negative {
+      color: var(--red) !important;
     }
 
-    .profit-zero {
-      color: #7f8c8d !important;
+    .profit-zero,
+    .option-details .value.zero {
+      color: var(--gray) !important;
     }
 
-    .section-divider {
-      margin: 35px 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
-      border: none;
-    }
-
-    .section-title {
-      color: #667eea;
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 25px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .section-title::before {
-      content: '';
-      width: 4px;
-      height: 24px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border-radius: 2px;
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        min-height: 100vh;
-      }
-
-      .sidebar {
-        width: 100%;
-        flex-direction: row;
-        padding: 10px 0;
-        border-right: none;
-        border-bottom: 1px solid #34495e;
-      }
-
-      .sidebar-item {
-        flex: 1;
-        text-align: center;
-        font-size: 14px;
-        padding: 12px;
-        border-left: none;
-        border-bottom: 3px solid transparent;
-      }
-
-      .sidebar-item:hover {
-        border-left: none;
-        border-bottom-color: #3498db;
-      }
-
-      .sidebar-item.active {
-        border-left: none;
-        border-bottom-color: #3498db;
-      }
-
-      .content {
-        padding: 20px;
-      }
-
-      h1 {
-        font-size: 24px;
-        margin-bottom: 25px;
-      }
-
-      .form-group {
-        margin-bottom: 20px;
-      }
-
-      .radio-group {
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .radio-option {
-        justify-content: flex-start;
-        padding: 8px 12px;
-      }
-
-      .result-value {
-        font-size: 16px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        max-width: 100%;
-      }
-
-      .sidebar {
-        padding: 8px 0;
-      }
-
-      .sidebar-item {
-        font-size: 12px;
-        padding: 10px 8px;
-      }
-
-      .content {
-        padding: 15px;
-      }
-
-      h1 {
-        font-size: 20px;
-        margin-bottom: 20px;
-      }
-
-      input[type="number"],
-      input[type="text"] {
-        padding: 10px 12px;
-        font-size: 15px;
-      }
-
-      .btn {
-        padding: 12px;
-        font-size: 15px;
-      }
-
-      .results {
-        padding: 15px;
-      }
-
-      .result-item {
-        margin-bottom: 12px;
-        padding-bottom: 12px;
-      }
-    }
-
-    /* 模态框样式 */
     .modal {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      inset: 0;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      padding: 22px;
+      background: rgba(245, 245, 247, 0.62);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       z-index: 1000;
       opacity: 0;
       visibility: hidden;
-      transition: all 0.3s ease;
+      transition: all 0.25s ease;
     }
 
     .modal.show {
@@ -406,54 +285,60 @@
     }
 
     .modal-content {
-      background: white;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 800px;
-      max-height: 90vh;
+      width: min(820px, 100%);
+      max-height: 88vh;
       overflow-y: auto;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-      transform: translateY(-20px);
-      transition: transform 0.3s ease;
+      background: var(--panel-strong);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 24px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+      transform: scale(0.98) translateY(10px);
+      transition: transform 0.25s ease;
     }
 
     .modal.show .modal-content {
-      transform: translateY(0);
+      transform: scale(1) translateY(0);
     }
 
     .modal-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid #e0e0e0;
-      background: #f8f9fa;
-      border-radius: 12px 12px 0 0;
-      position: relative;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      padding: 22px 26px;
+      background: rgba(255, 255, 255, 0.86);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
     }
 
     .modal-header h3 {
-      margin: 0;
+      color: var(--text);
       font-size: 20px;
       font-weight: 700;
-      color: #333;
     }
 
     .modal-close {
       position: absolute;
-      top: 15px;
-      right: 20px;
-      background: none;
-      border: none;
+      top: 17px;
+      right: 18px;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(118, 118, 128, 0.14);
+      color: var(--muted);
       font-size: 24px;
+      line-height: 1;
       cursor: pointer;
-      color: #999;
-      transition: color 0.3s ease;
     }
 
     .modal-close:hover {
-      color: #333;
+      color: var(--text);
+      background: rgba(118, 118, 128, 0.22);
     }
 
     .modal-body {
-      padding: 24px;
+      padding: 24px 26px 28px;
     }
 
     .modal-footer {
@@ -461,145 +346,124 @@
     }
 
     .option-card {
-      background: #f8f9fa;
-      border-radius: 8px;
+      margin-bottom: 18px;
       padding: 20px;
-      margin-bottom: 20px;
-      border: 1px solid #e0e0e0;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 18px;
     }
 
     .option-header {
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     }
 
     .option-header .rank {
-      font-size: 18px;
+      color: var(--text);
+      font-size: 17px;
       font-weight: 700;
-      color: #333;
     }
 
     .option-details {
+      color: var(--muted);
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
     .option-details p {
-      margin: 8px 0;
-    }
-
-    .recharge-type {
-      font-weight: 600;
-      color: #3498db;
-      font-size: 16px;
-      margin-bottom: 12px !important;
+      margin: 7px 0;
     }
 
     .option-details .value {
+      color: var(--text);
       font-weight: 700;
-      color: #2c3e50;
     }
 
-    .option-details .value.positive {
-      color: #27ae60;
+    .recharge-type {
+      color: var(--blue);
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px !important;
     }
 
-    .option-details .value.negative {
-      color: #e74c3c;
-    }
-
-    .option-details .value.zero {
-      color: #95a5a6;
-    }
-
-    /* 组合充值步骤样式 */
     .combination-steps {
-      margin: 20px 0;
-      padding: 15px;
-      background: #f0f4f8;
-      border-radius: 8px;
-      border-left: 4px solid #3498db;
+      margin: 18px 0;
+      padding: 16px;
+      background: rgba(0, 122, 255, 0.08);
+      border-radius: 18px;
     }
 
     .combination-steps h4 {
-      margin: 0 0 15px 0;
-      font-size: 16px;
+      color: var(--text);
+      font-size: 15px;
       font-weight: 700;
-      color: #333;
+      margin-bottom: 14px;
     }
 
     .steps-container {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
       gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 10px;
     }
 
     .step-item {
-      background: white;
-      border-radius: 6px;
-      padding: 15px;
-      border: 1px solid #e0e0e0;
-      min-width: 200px;
-      flex: 1;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(0, 0, 0, 0.07);
+      border-radius: 14px;
     }
 
     .step-item h5 {
-      margin: 0 0 10px 0;
+      color: var(--blue);
       font-size: 14px;
-      font-weight: 600;
-      color: #3498db;
+      font-weight: 700;
+      margin-bottom: 10px;
     }
 
     .step-item p {
-      margin: 6px 0;
+      color: var(--muted);
       font-size: 13px;
+      margin: 6px 0;
     }
 
-    /* 响应式调整 */
     @media (max-width: 768px) {
-      .modal-content {
-        width: 95%;
-        max-height: 85vh;
+      body {
+        padding: 14px;
       }
 
-      .modal-header,
-      .modal-body,
-      .modal-footer {
-        padding: 16px;
+      .container {
+        min-height: calc(100vh - 28px);
+        border-radius: 22px;
       }
 
-      .option-card {
-        padding: 16px;
+      .content {
+        padding: 26px 18px;
       }
 
-      .option-header .rank {
-        font-size: 16px;
+      h1 {
+        font-size: 28px;
+        margin-bottom: 24px;
       }
 
-      .recharge-type {
-        font-size: 14px;
+      .form-grid,
+      .button-group,
+      .custom-plan-inputs {
+        grid-template-columns: 1fr;
       }
 
-      .combination-steps {
-        padding: 12px;
+      .radio-group {
+        grid-template-columns: 1fr;
       }
 
-      .combination-steps h4 {
-        font-size: 14px;
+      .result-item {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
       }
 
-      .step-item {
-        padding: 12px;
-      }
-
-      .step-item h5 {
-        font-size: 13px;
-      }
-
-      .step-item p {
-        font-size: 12px;
+      .result-value {
+        text-align: left;
       }
     }
   </style>
@@ -607,151 +471,92 @@
 
 <body>
   <div class="container">
-    <div class="sidebar">
-      <div class="sidebar-item" onclick="showTab('calculator')">
-        🥚 充值计算器
-      </div>
-      <div class="sidebar-item active" onclick="showTab('coupon')">
-        🎫 优惠券分析
-      </div>
-    </div>
-
-    <div class="content">
-      <div id="calculator-tab" style="display: none;">
-        <h1>🥚 蛋仔派对充值计算器</h1>
-
-        <div class="form-group">
-          <label>选择日期类型</label>
-          <div class="radio-group">
-            <div class="radio-option">
-              <input type="radio" id="rebate" name="dayType" value="rebate" checked>
-              <label for="rebate">返利日</label>
-            </div>
-            <div class="radio-option">
-              <input type="radio" id="normal" name="dayType" value="normal">
-              <label for="normal">非返利日</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="rechargeAmount">充值金额（元）</label>
-          <input type="number" id="rechargeAmount" placeholder="例如：328" step="0.01">
-        </div>
-
-        <div class="form-group">
-          <label for="actualPayment">实际付款金额（元）</label>
-          <input type="number" id="actualPayment" placeholder="例如：246" step="0.01">
-        </div>
-
-        <button class="btn" onclick="calculate()">计算</button>
-
-        <div class="form-group" style="margin-top: 20px;">
-          <label for="eggRate">蛋币兑换比例（元/蛋币）</label>
-          <input type="number" id="eggRate" placeholder="例如：0.065" step="0.001">
-        </div>
-
-        <div class="form-group">
-          <label for="couponRate">无门槛优惠券兑换比例（元/优惠券）</label>
-          <input type="number" id="couponRate" placeholder="例如：0.7" step="0.01">
-        </div>
-
-        <button class="btn" onclick="calculateProfit()">计算利润</button>
-
-        <div class="results" id="results">
-          <div class="result-item">
-            <div class="result-label">获得蛋币</div>
-            <div class="result-value" id="eggCoins">-</div>
-          </div>
-          <div class="result-item" id="couponItem">
-            <div class="result-label">无门槛优惠券</div>
-            <div class="result-value" id="coupons">-</div>
-          </div>
-          <div class="result-item" id="totalReturnItem">
-            <div class="result-label">兑换后总金额（元）</div>
-            <div class="result-value" id="totalReturn">-</div>
-          </div>
-          <div class="result-item" id="profitItem">
-            <div class="result-label">赚取金额（元）</div>
-            <div class="result-value" id="profit">-</div>
-          </div>
-          <div class="result-item" id="discountItem">
-            <div class="result-label">折扣</div>
-            <div class="result-value" id="discount">-</div>
-          </div>
-          <div class="result-item" id="actualDiscountItem">
-            <div class="result-label">实际折扣</div>
-            <div class="result-value" id="actualDiscount">-</div>
-          </div>
-        </div>
-      </div>
-
+    <main class="content">
       <div id="coupon-tab">
-        <h1>🎫 优惠券分析</h1>
+        <h1>优惠券分析</h1>
 
-        <div class="form-group">
-          <label>选择日期类型</label>
-          <div class="radio-group">
-            <div class="radio-option">
-              <input type="radio" id="couponRebate" name="couponDayType" value="rebate" checked>
-              <label for="couponRebate">返利日</label>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>选择日期类型</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="couponRebate" name="couponDayType" value="rebate" checked>
+                <label for="couponRebate">返利日</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="couponNormal" name="couponDayType" value="normal">
+                <label for="couponNormal">非返利日</label>
+              </div>
             </div>
-            <div class="radio-option">
-              <input type="radio" id="couponNormal" name="couponDayType" value="normal">
-              <label for="couponNormal">非返利日</label>
+          </div>
+
+          <div class="form-group">
+            <label>优惠券类型</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="discountCoupon" name="couponType" value="discount" checked>
+                <label for="discountCoupon">折扣券</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="fixedCoupon" name="couponType" value="fixed">
+                <label for="fixedCoupon">金额券</label>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label>优惠券类型</label>
-          <div class="radio-group">
-            <div class="radio-option">
-              <input type="radio" id="discountCoupon" name="couponType" value="discount" checked>
-              <label for="discountCoupon">折扣券（如7折）</label>
-            </div>
-            <div class="radio-option">
-              <input type="radio" id="fixedCoupon" name="couponType" value="fixed">
-              <label for="fixedCoupon">金额券（如328-100）</label>
+        <div class="form-grid">
+          <div class="form-group" id="discountInput">
+            <label for="couponDiscount">优惠券折扣（如 0.7 表示 7 折）</label>
+            <input type="number" id="couponDiscount" placeholder="例如：0.7" step="0.01">
+          </div>
+          <div class="form-group" id="couponAmountInput">
+            <label for="couponAmount">可抵金额（元）</label>
+            <input type="number" id="couponAmount" placeholder="例如：10" step="0.01">
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group" id="fixedInput" style="display: none;">
+            <label for="minAmount">使用门槛（元）</label>
+            <input type="number" id="minAmount" placeholder="例如：328" step="0.01">
+            <label for="fixedAmount" style="margin-top: 14px;">优惠金额（元）</label>
+            <input type="number" id="fixedAmount" placeholder="例如：100" step="0.01">
+          </div>
+          <div class="form-group" id="useTypeInput">
+            <label>优惠券使用次数</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="multipleUse" name="useType" value="multiple" checked>
+                <label for="multipleUse">多次使用</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="singleUse" name="useType" value="single">
+                <label for="singleUse">单次使用</label>
+              </div>
             </div>
           </div>
         </div>
-        <div class="form-group" id="discountInput">
-          <label for="couponDiscount">优惠券折扣（如0.7表示7折）</label>
-          <input type="number" id="couponDiscount" placeholder="例如：0.7" step="0.01">
-        </div>
-        <div class="form-group" id="fixedInput" style="display: none;">
-          <label for="minAmount">使用门槛（元）</label>
-          <input type="number" id="minAmount" placeholder="例如：328" step="0.01">
-          <label for="fixedAmount">优惠金额（元）</label>
-          <input type="number" id="fixedAmount" placeholder="例如：100" step="0.01">
-        </div>
-        <div class="form-group" id="useTypeInput">
-          <label>优惠券使用次数</label>
-          <div class="radio-group">
-            <div class="radio-option">
-              <input type="radio" id="multipleUse" name="useType" value="multiple" checked>
-              <label for="multipleUse">多次使用</label>
-            </div>
-            <div class="radio-option">
-              <input type="radio" id="singleUse" name="useType" value="single">
-              <label for="singleUse">单次使用</label>
-            </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="analysisEggRate">蛋币折算比例（元/蛋币）</label>
+            <input type="number" id="analysisEggRate" value="0.075" placeholder="例如：0.075" step="0.001">
           </div>
-        </div>
-        <div class="form-group" id="couponAmountInput">
-          <label for="couponAmount">可抵金额（元）</label>
-          <input type="number" id="couponAmount" placeholder="例如：10" step="0.01">
+          <div class="form-group">
+            <label for="analysisCouponRate">无门槛优惠券折算比例（元/张）</label>
+            <input type="number" id="analysisCouponRate" value="0.7" placeholder="例如：0.7" step="0.01">
+          </div>
         </div>
 
         <div class="form-group">
           <label>自定义充值方案</label>
           <div class="custom-plan-inputs">
-            <input type="number" id="customPlan1" placeholder="充值金额1（元）" step="0.01">
-            <input type="number" id="customPlan2" placeholder="充值金额2（元）" step="0.01">
-            <input type="number" id="customPlan3" placeholder="充值金额3（元）" step="0.01">
+            <input type="number" id="customPlan1" placeholder="充值金额 1（元）" step="0.01">
+            <input type="number" id="customPlan2" placeholder="充值金额 2（元）" step="0.01">
+            <input type="number" id="customPlan3" placeholder="充值金额 3（元）" step="0.01">
           </div>
-          <p class="hint">填写充值金额，留空表示不使用该位置</p>
+          <p class="hint">填写充值金额，留空表示不使用该位置。</p>
         </div>
 
         <div class="button-group">
@@ -773,7 +578,7 @@
             <div class="result-value" id="couponTotalReturn">-</div>
           </div>
           <div class="result-item">
-            <div class="result-label">赚取金额（元）</div>
+            <div class="result-label">预估利润（元）</div>
             <div class="result-value" id="couponProfit">-</div>
           </div>
           <div class="result-item">
@@ -786,7 +591,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 
   <script>
@@ -798,24 +603,6 @@
       { amount: 328, eggCoins: 3548 },
       { amount: 648, eggCoins: 7068 }
     ];
-
-    function showTab(tabName) {
-      // 隐藏所有标签页
-      document.getElementById('calculator-tab').style.display = 'none';
-      document.getElementById('coupon-tab').style.display = 'none';
-
-      // 移除所有侧边栏项目的活跃状态
-      document.querySelectorAll('.sidebar-item').forEach(item => {
-        item.classList.remove('active');
-      });
-
-      // 显示选中的标签页
-      document.getElementById(tabName + '-tab').style.display = 'block';
-
-      // 激活选中的侧边栏项目
-      event.currentTarget.classList.add('active');
-    }
-
     // 优惠券类型切换
     document.querySelectorAll('input[name="couponType"]').forEach(radio => {
       radio.addEventListener('change', function () {
@@ -860,85 +647,21 @@
       return Math.ceil(couponValue);
     }
 
-    let eggCoinsResult = 0;
-    let couponsResult = 0;
+    function getAnalysisRates() {
+      const eggRate = parseFloat(document.getElementById('analysisEggRate').value);
+      const couponRate = parseFloat(document.getElementById('analysisCouponRate').value);
 
-    function calculate() {
-      const rechargeAmount = parseFloat(document.getElementById('rechargeAmount').value);
-      const actualPayment = parseFloat(document.getElementById('actualPayment').value);
-      const dayType = document.querySelector('input[name="dayType"]:checked').value;
-      const isRebateDay = dayType === 'rebate';
-
-      if (isNaN(rechargeAmount) || isNaN(actualPayment)) {
-        alert('请输入有效的充值金额和实际付款金额');
-        return;
+      if (isNaN(eggRate) || eggRate < 0) {
+        alert('请输入有效的蛋币折算比例');
+        return null;
       }
 
-      eggCoinsResult = getEggCoins(rechargeAmount);
-      couponsResult = getCoupons(actualPayment, isRebateDay);
-
-      document.getElementById('eggCoins').textContent = eggCoinsResult + ' 蛋币';
-      document.getElementById('coupons').textContent = couponsResult + ' 张';
-
-      const resultsDiv = document.getElementById('results');
-      resultsDiv.classList.add('show');
-
-      document.getElementById('couponItem').style.display = isRebateDay ? 'block' : 'none';
-      document.getElementById('totalReturnItem').style.display = 'none';
-      document.getElementById('profitItem').style.display = 'none';
-      document.getElementById('discountItem').style.display = 'none';
-      document.getElementById('actualDiscountItem').style.display = 'none';
-    }
-
-    function calculateProfit() {
-      const eggRate = parseFloat(document.getElementById('eggRate').value);
-      const couponRate = parseFloat(document.getElementById('couponRate').value);
-      const actualPayment = parseFloat(document.getElementById('actualPayment').value);
-      const dayType = document.querySelector('input[name="dayType"]:checked').value;
-      const isRebateDay = dayType === 'rebate';
-
-      if (eggCoinsResult === 0) {
-        alert('请先点击"计算"按钮');
-        return;
+      if (isNaN(couponRate) || couponRate < 0) {
+        alert('请输入有效的无门槛优惠券折算比例');
+        return null;
       }
 
-      if (isNaN(eggRate) || (isRebateDay && isNaN(couponRate))) {
-        alert('请输入有效的兑换比例');
-        return;
-      }
-
-      let totalReturn = eggCoinsResult * eggRate;
-      if (isRebateDay) {
-        totalReturn += couponsResult * couponRate;
-      }
-
-      const profit = totalReturn - actualPayment;
-      const newTotal = 0.1 * eggCoinsResult + couponsResult;
-      const discount = newTotal > 0 ? actualPayment / newTotal : 0;
-
-      document.getElementById('totalReturn').textContent = totalReturn.toFixed(2) + ' 元';
-      const profitElement = document.getElementById('profit');
-      profitElement.textContent = profit.toFixed(2) + ' 元';
-
-      profitElement.classList.remove('profit-positive', 'profit-negative', 'profit-zero');
-      if (profit > 0) {
-        profitElement.classList.add('profit-positive');
-      } else if (profit < 0) {
-        profitElement.classList.add('profit-negative');
-      } else {
-        profitElement.classList.add('profit-zero');
-      }
-
-      document.getElementById('discount').textContent = discount.toFixed(4) + ' 折';
-
-      // 显示与优惠券分析相同的折扣计算方式
-      const discountRate = newTotal > 0 ? actualPayment / newTotal : 0;
-      document.getElementById('actualDiscount').textContent = discountRate.toFixed(4) + ' 折';
-
-      document.getElementById('totalReturnItem').style.display = 'block';
-      document.getElementById('profitItem').style.display = 'block';
-      document.getElementById('discountItem').style.display = 'block';
-      document.getElementById('actualDiscountItem').style.display = 'block';
+      return { eggRate, couponRate };
     }
 
     function analyzeCoupon() {
@@ -955,8 +678,8 @@
 
         if (couponType === 'discount') {
           useType = document.querySelector('input[name="useType"]:checked').value;
-          couponAmount = parseFloat(document.getElementById('couponAmount').value);
-          couponDiscount = parseFloat(document.getElementById('couponDiscount').value);
+          couponAmount = parseFloat(document.getElementById('couponAmount').value) || 0;
+          couponDiscount = parseFloat(document.getElementById('couponDiscount').value) || 0;
           if (isNaN(couponDiscount)) {
             alert('请输入有效的折扣值');
             return;
@@ -969,10 +692,6 @@
             alert('优惠券折扣必须大于0');
             return;
           }
-          if (isNaN(couponAmount)) {
-            alert('请输入有效的可抵金额');
-            return;
-          }
           if (couponAmount < 0) {
             alert('可抵金额必须大于等于0');
             return;
@@ -980,8 +699,8 @@
         } else {
           // 金额券：优惠金额就是可抵金额，强制单次使用
           useType = 'single';
-          minAmount = parseFloat(document.getElementById('minAmount').value);
-          fixedAmount = parseFloat(document.getElementById('fixedAmount').value);
+          minAmount = parseFloat(document.getElementById('minAmount').value) || 0;
+          fixedAmount = parseFloat(document.getElementById('fixedAmount').value) || 0;
           couponAmount = fixedAmount; // 优惠金额就是可抵金额
           if (isNaN(minAmount)) {
             alert('请输入有效的使用门槛');
@@ -1011,9 +730,10 @@
           console.log('优惠金额:', fixedAmount);
         }
 
-        // 默认兑换比例
-        const defaultEggRate = 0.075;
-        const defaultCouponRate = 0.75;
+        const rates = getAnalysisRates();
+        if (!rates) return;
+        const defaultEggRate = rates.eggRate;
+        const defaultCouponRate = rates.couponRate;
 
         // 分析所有充值档位和可能的组合
         let bestProfitOption = null;
@@ -1531,11 +1251,11 @@
           let recommendationReason = '利润最优';
 
           // 显示最终推荐方案
-          document.getElementById('eggCoins').textContent = finalOption.eggCoins + ' 蛋币';
-          document.getElementById('coupons').textContent = finalOption.coupons + ' 张';
-          document.getElementById('totalReturn').textContent = finalOption.totalValue.toFixed(2) + ' 元';
+          document.getElementById('couponEggCoins').textContent = finalOption.eggCoins + ' 蛋币';
+          document.getElementById('couponCoupons').textContent = finalOption.coupons + ' 张';
+          document.getElementById('couponTotalReturn').textContent = finalOption.totalValue.toFixed(2) + ' 元';
 
-          const profitElement = document.getElementById('profit');
+          const profitElement = document.getElementById('couponProfit');
           profitElement.textContent = finalOption.profit.toFixed(2) + ' 元';
           profitElement.classList.remove('profit-positive', 'profit-negative', 'profit-zero');
           if (finalOption.profit > 0) {
@@ -1546,17 +1266,13 @@
             profitElement.classList.add('profit-zero');
           }
 
-          document.getElementById('discount').textContent = finalOption.discount.toFixed(4) + ' 折';
-          document.getElementById('actualDiscount').textContent = finalOption.discount.toFixed(4) + ' 折';
+          document.getElementById('couponResultDiscount').textContent = finalOption.discount.toFixed(4) + ' 折';
+          document.getElementById('couponActualDiscount').textContent = finalOption.discount.toFixed(4) + ' 折';
 
           // 显示结果
-          const resultsDiv = document.getElementById('results');
+          const resultsDiv = document.getElementById('couponResults');
           resultsDiv.classList.add('show');
-          document.getElementById('couponItem').style.display = isRebateDay ? 'block' : 'none';
-          document.getElementById('totalReturnItem').style.display = 'block';
-          document.getElementById('profitItem').style.display = 'block';
-          document.getElementById('discountItem').style.display = 'block';
-          document.getElementById('actualDiscountItem').style.display = 'block';
+          document.getElementById('couponCouponItem').style.display = isRebateDay ? 'flex' : 'none';
 
           // 收集所有方案并排序
           const allOptions = [];
@@ -1592,8 +1308,8 @@
               remainingCoupon -= actualDiscount;
             } else {
               // 金额券
-              if (tier.amount >= couponThreshold) {
-                actualPayment = tier.amount - couponFixedAmount;
+              if (tier.amount >= minAmount) {
+                actualPayment = tier.amount - fixedAmount;
               } else {
                 actualPayment = tier.amount;
               }
@@ -1712,11 +1428,13 @@
                     stepRemainingCoupon -= actualDiscount;
                   } else {
                     // 金额券
-                    if (amount >= couponThreshold) {
-                      stepActualPayment = amount - couponFixedAmount;
+                    if (amount >= minAmount) {
+                      stepActualPayment = amount - fixedAmount;
                     } else {
                       stepActualPayment = amount;
                     }
+                    // 金额券单次使用，使用后剩余金额为0
+                    stepRemainingCoupon = 0;
                   }
 
                   // 计算本次获得的优惠券
@@ -1812,16 +1530,22 @@
     // 计算自定义充值方案
     function calculateCustomPlan() {
       try {
-        // 蛋币和优惠券兑换比例（默认值）
-        const defaultEggRate = 0.075;
-        const defaultCouponRate = 0.75;
+        const rates = getAnalysisRates();
+        if (!rates) return;
+        const defaultEggRate = rates.eggRate;
+        const defaultCouponRate = rates.couponRate;
 
         // 获取优惠券信息
         const couponType = document.querySelector('input[name="couponType"]:checked').value;
         const couponDiscount = parseFloat(document.getElementById('couponDiscount').value) || 0;
         const couponFixedAmount = parseFloat(document.getElementById('fixedAmount').value) || 0;
         const couponThreshold = parseFloat(document.getElementById('minAmount').value) || 0;
-        const couponAmount = parseFloat(document.getElementById('couponAmount').value) || 0;
+        let couponAmount = 0;
+        if (couponType === 'discount') {
+          couponAmount = parseFloat(document.getElementById('couponAmount').value) || 0;
+        } else {
+          couponAmount = couponFixedAmount;
+        }
         const isRebateDay = document.querySelector('input[name="couponDayType"]:checked').value === 'rebate';
 
         // 获取自定义充值方案
